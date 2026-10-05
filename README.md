@@ -208,7 +208,7 @@ See **[docs/TOPICS.md](docs/TOPICS.md)** for how each technique maps to the UML5
 ## Quick start (macOS / Linux)
 
 ```bash
-git clone https://github.com/<your-username>/RetinaAI.git
+git clone https://github.com/bhargavchetanya/RetinaAI.git
 cd RetinaAI
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt          # macOS: brew install libomp (needed by XGBoost)
