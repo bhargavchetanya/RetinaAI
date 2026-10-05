@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# macOS
+.DS_Store
+
+# Dataset (Kaggle rules: do not re-host APTOS images – download with scripts/01_download_data.py)
+data/raw/
+data/processed/
+
+# Large / temporary model files (the trained model itself IS committed)
+models/last_state.pt
+models/backup_*.pt
+models/all_embeddings.npz
+
+# Local app data (patient screenings, generated images)
+backend/storage/
+
+# Frontend build output
+frontend/node_modules/
+frontend/.next/
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+
+# Misc
+_old_skeleton/
+reports/overnight_log.txt
+scripts/.03_train_backup.py

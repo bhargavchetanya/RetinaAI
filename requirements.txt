@@ -1,0 +1,17 @@
+# Python 3.10+  (tested with PyTorch 2.x; uses the Apple-Silicon GPU via MPS)
+torch>=2.2
+torchvision>=0.17
+numpy
+pandas
+opencv-python
+scikit-learn
+xgboost            # macOS: if `import xgboost` fails, run `brew install libomp`
+matplotlib
+tqdm
+fastapi
+uvicorn[standard]
+python-multipart
+reportlab
+onnx
+onnxruntime
+kaggle             # only needed for scripts/01_download_data.py

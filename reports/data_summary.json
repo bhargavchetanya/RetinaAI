@@ -1,0 +1,47 @@
+{
+  "raw_rows": 3662,
+  "unreadable": 0,
+  "duplicate_groups": 130,
+  "conflicting_duplicate_groups": 37,
+  "removed_duplicates": 175,
+  "clean_images": 3487,
+  "poor_quality_flagged": 27,
+  "preprocess_method": "ben",
+  "cache_size": 512,
+  "original_resolution": {
+    "median_w": 2048,
+    "median_h": 1536,
+    "min_w": 474,
+    "max_w": 4288
+  },
+  "class_counts": {
+    "No DR": 1796,
+    "Mild": 338,
+    "Moderate": 921,
+    "Severe": 168,
+    "Proliferative DR": 264
+  },
+  "splits": {
+    "train": {
+      "No DR": 1257,
+      "Mild": 236,
+      "Moderate": 644,
+      "Severe": 118,
+      "Proliferative DR": 185
+    },
+    "val": {
+      "No DR": 269,
+      "Mild": 51,
+      "Moderate": 138,
+      "Severe": 25,
+      "Proliferative DR": 40
+    },
+    "test": {
+      "No DR": 270,
+      "Mild": 51,
+      "Moderate": 139,
+      "Severe": 25,
+      "Proliferative DR": 39
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Chart tokens (dark theme – the app is dark-only) */
+:root {
+  color-scheme: dark;
+  --surface-1: #0f172a;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --grid: #1e293b;
+  --axis: #334155;
+  --series-1: #3987e5; /* blue   */
+  --series-2: #d95926; /* orange */
+  --series-3: #199e70; /* aqua   */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+}
+
+html,
+body {
+  background: #020617;
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Devanagari", sans-serif;
+}
+
+.card {
+  @apply rounded-2xl border border-slate-800 bg-slate-900/70 p-5;
+}
+.label {
+  @apply text-xs font-medium uppercase tracking-wide text-slate-400;
+}
+.input {
+  @apply w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-cyan-500;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,67 @@
+{
+  "results": [
+    {
+      "name": "Hand-crafted features + XGBoost",
+      "family": "Classical (no deep learning)",
+      "features": "23 colour / lesion-morphology features",
+      "best_params": {
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "n_estimators": 400
+      },
+      "cv_qwk": 0.7473,
+      "test_accuracy": 0.7347,
+      "test_qwk": 0.7711,
+      "fit_seconds": 24.4
+    },
+    {
+      "name": "CNN embeddings + Logistic Regression",
+      "family": "Transfer learning (feature extractor)",
+      "features": "1280-d embedding -> PCA 356 comps (95% var)",
+      "best_params": {
+        "C": 0.01
+      },
+      "cv_qwk": 0.9528,
+      "test_accuracy": 0.8397,
+      "test_qwk": 0.9059,
+      "fit_seconds": 2.7
+    },
+    {
+      "name": "CNN embeddings + SVM (RBF kernel)",
+      "family": "Transfer learning (feature extractor)",
+      "features": "1280-d embedding -> PCA 356 comps (95% var)",
+      "best_params": {
+        "C": 1,
+        "gamma": "scale"
+      },
+      "cv_qwk": 0.9557,
+      "test_accuracy": 0.8531,
+      "test_qwk": 0.9288,
+      "fit_seconds": 4.7
+    },
+    {
+      "name": "CNN embeddings + XGBoost",
+      "family": "Transfer learning (feature extractor)",
+      "features": "1280-d embedding -> PCA 356 comps (95% var)",
+      "best_params": {
+        "learning_rate": 0.1,
+        "max_depth": 5,
+        "n_estimators": 300
+      },
+      "cv_qwk": 0.9551,
+      "test_accuracy": 0.8645,
+      "test_qwk": 0.9217,
+      "fit_seconds": 61.5
+    },
+    {
+      "name": "Fine-tuned EfficientNet-B0 (ours)",
+      "family": "Deep learning (end-to-end)",
+      "features": "raw pixels",
+      "best_params": {},
+      "cv_qwk": null,
+      "test_accuracy": 0.8569,
+      "test_qwk": 0.9265,
+      "fit_seconds": null
+    }
+  ]
+}
