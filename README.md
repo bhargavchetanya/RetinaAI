@@ -205,7 +205,9 @@ See **[docs/TOPICS.md](docs/TOPICS.md)** for how each technique maps to the UML5
 
 ---
 
-## Quick start (macOS / Linux)
+## Quick start
+
+### macOS / Linux
 
 ```bash
 git clone https://github.com/bhargavchetanya/RetinaAI.git
@@ -218,6 +220,40 @@ bash start_app.sh                        # backend :8000 + website :3000
 Open **http://localhost:3000**. The trained model is included in `models/`, so no training is needed to try the
 website. You need Node.js 18+.
 
+### Windows
+
+Use **Command Prompt** or **PowerShell**. You need [Python 3.10+](https://www.python.org/downloads/) (tick *"Add python.exe to PATH"* during install), [Node.js 18+](https://nodejs.org/) and [Git](https://git-scm.com/download/win).
+
+```bat
+git clone https://github.com/bhargavchetanya/RetinaAI.git
+cd RetinaAI
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+start_app.bat
+```
+
+`start_app.bat` opens the backend in a second window and runs the website in the first. Open **http://localhost:3000**.
+
+In PowerShell, run `.venv\Scripts\Activate.ps1` instead of `.venv\Scripts\activate`. If PowerShell says *"running scripts is disabled"*, run
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
+
+To start the two servers manually in two terminals:
+
+```bat
+:: terminal 1
+.venv\Scripts\activate
+python -m uvicorn backend.main:app --port 8000
+
+:: terminal 2
+cd frontend
+npm install
+npm run dev
+```
+
+On Windows the model runs on the **CPU**, or on an NVIDIA GPU if you install the CUDA build of PyTorch
+([pytorch.org](https://pytorch.org/get-started/locally/)).
+
 ### Re-train from scratch
 
 ```bash
@@ -226,6 +262,11 @@ python scripts/01_download_data.py
 # 2. full pipeline: prepare -> train -> evaluate -> baselines -> ONNX
 python scripts/02_prepare_data.py
 caffeinate -dimsu bash scripts/train_overnight.sh      # macOS; on Linux drop "caffeinate -dimsu"
+# Windows: run the steps one by one instead
+#   python scripts/03_train.py --num-workers 0
+#   python scripts/04_evaluate.py
+#   python scripts/05_baselines.py
+#   python scripts/06_export_onnx.py
 python scripts/07_sample_predictions.py
 ```
 
