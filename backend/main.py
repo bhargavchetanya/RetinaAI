@@ -4,8 +4,8 @@ Run from the project root:
     python -m uvicorn backend.main:app --port 8000
 Docs (auto-generated, try requests in the browser): http://localhost:8000/docs
 
-Roles:  admin (all records, manage users) · hospital (its own screenings, add doctors)
-        doctor (own screenings) · patient (own reports only)
+Roles:  admin (all records, manage users) · hospital (its doctors' screenings, add doctors)
+        doctor (screens patients, sees own screenings) · patient (own reports only)
 """
 from __future__ import annotations
 
@@ -175,7 +175,8 @@ async def screen(file: UploadFile = File(...), patient_id: int | None = Form(Non
                  patient_name: str = Form(""), patient_age: int | None = Form(None),
                  patient_sex: str = Form(""), diabetes_years: float | None = Form(None), eye: str = Form(""),
                  centre: str = Form(""), save: bool = Form(True),
-                 user: dict = Depends(auth.require(*STAFF))):
+                 user: dict = Depends(auth.require("doctor"))):
+    """Only doctors upload images and screen patients (hospital/admin only review)."""
     if predictor is None:
         raise HTTPException(503, load_error or "model not loaded")
     data = await file.read()
@@ -193,9 +194,8 @@ async def screen(file: UploadFile = File(...), patient_id: int | None = Form(Non
             patient_name = patient_name or p["full_name"]
             patient_age = patient_age if patient_age is not None else p["age"]
             patient_sex = patient_sex or (p["sex"] or "")
-        doctor_id = user["id"] if user["role"] == "doctor" else None
-        hospital_id = (user["hospital_id"] if user["role"] == "doctor"
-                       else user["id"] if user["role"] == "hospital" else None)
+        doctor_id = user["id"]
+        hospital_id = user["hospital_id"]          # the doctor's hospital
         if not centre.strip() and hospital_id:
             centre = (db.get_user(hospital_id) or {}).get("full_name", "")
         meta = dict(patient_name=patient_name.strip(), patient_age=patient_age, patient_sex=patient_sex,

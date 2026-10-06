@@ -10,7 +10,7 @@ import type { Role } from "@/types";
 const ROLES: { role: Role; icon: React.ElementType; text: string; demo: [string, string] }[] = [
   { role: "patient", icon: UserIcon, text: "See your own eye-screening reports", demo: ["patient1", "patient123"] },
   { role: "doctor", icon: Stethoscope, text: "Screen patients and review your cases", demo: ["doctor1", "doctor123"] },
-  { role: "hospital", icon: Building2, text: "All screenings at your centre, manage doctors", demo: ["hospital1", "hospital123"] },
+  { role: "hospital", icon: Building2, text: "Review your doctors' screenings, manage doctors", demo: ["hospital1", "hospital123"] },
   { role: "admin", icon: ShieldCheck, text: "All records and all user accounts", demo: ["admin", "admin123"] },
 ];
 

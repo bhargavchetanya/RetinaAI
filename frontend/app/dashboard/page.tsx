@@ -28,7 +28,7 @@ export default function DashboardPage() {
 
 const SCOPE_TEXT = {
   admin: "All records from every hospital (administrator view).",
-  hospital: "Screenings performed at your hospital, by you or your doctors.",
+  hospital: "Screenings performed by the doctors of your hospital.",
   doctor: "Screenings you performed.",
   patient: "",
 };
@@ -74,10 +74,16 @@ function Dashboard() {
           {stats.total === 0 ? (
             <div className="card mt-6 text-center text-slate-400">
               No screenings yet.{" "}
-              <Link href="/screening" className="text-cyan-400 underline">
-                Screen the first patient
-              </Link>
-              .
+              {user?.role === "doctor" ? (
+                <>
+                  <Link href="/screening" className="text-cyan-400 underline">
+                    Screen the first patient
+                  </Link>
+                  .
+                </>
+              ) : (
+                "Screenings appear here once doctors start screening patients."
+              )}
             </div>
           ) : (
             <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">

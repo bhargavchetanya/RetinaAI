@@ -8,7 +8,7 @@ import type { Role } from "@/types";
 
 const LINKS: { href: string; label: string; roles: (Role | "public")[] }[] = [
   { href: "/", label: "Home", roles: ["public", "admin", "hospital", "doctor", "patient"] },
-  { href: "/screening", label: "Screening", roles: ["admin", "hospital", "doctor"] },
+  { href: "/screening", label: "Screening", roles: ["doctor"] },
   { href: "/dashboard", label: "Dashboard", roles: ["admin", "hospital", "doctor"] },
   { href: "/reports", label: "My Reports", roles: ["patient"] },
   { href: "/users", label: "Users", roles: ["admin", "hospital"] },

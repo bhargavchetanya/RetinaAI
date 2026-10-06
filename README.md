@@ -170,9 +170,9 @@ Every page except Home and Model needs a login. Each role sees only what it is a
 | Role | Can do | Sees |
 |---|---|---|
 | **Patient** | Register themselves, read and download their reports | Only their own screenings |
-| **Doctor** | Screen patients (link the screening to a patient account) | Only screenings they performed |
-| **Hospital** | Screen patients, add and remove its own doctors | Screenings done at that hospital |
-| **Admin** | Manage all accounts, delete records | **All records** |
+| **Doctor** | The **only** role that uploads images and screens patients (links each screening to a patient account) | Only screenings they performed |
+| **Hospital** | Add and remove its own doctors, review and update follow-up | Screenings done by its doctors |
+| **Admin** | Manage all accounts, delete records (cannot screen) | **All records** |
 
 How it is secured:
 

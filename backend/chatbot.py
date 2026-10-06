@@ -56,7 +56,7 @@ KB = [
      "bleeds (red blots). Hard exudates are yellow-white fatty deposits leaking from damaged vessels."),
     # ------------------------------------------------------------- the app --
     (["how do i use the app", "how to screen", "how to upload image", "how to start screening", "steps to use"],
-     "Doctors/hospitals: open Screening → choose the patient → upload a fundus photo → click Analyse. You get the "
+     "Doctors: open Screening → choose the patient → upload a fundus photo → click Analyse. You get the "
      "grade, confidence, heat-map, explanation and referral decision, and can download a PDF report. Patients can "
      "see their own results under My Reports."),
     (["what does the heatmap mean", "what is grad cam", "red area in image", "heat map explanation", "explainability"],
@@ -89,11 +89,12 @@ KB = [
     # ---------------------------------------------------- accounts & privacy --
     (["who can see my records", "privacy", "is my data safe", "data security", "who can access records"],
      "Access is role-based: a patient sees only their own reports, a doctor only the screenings they performed, a "
-     "hospital only screenings done at that hospital, and only the administrator can see all records. Passwords are "
+     "hospital only screenings done by its doctors, and only the administrator can see all records. Passwords are "
      "stored as salted PBKDF2 hashes and all data stays on this computer."),
     (["what are the roles", "user types", "patient doctor hospital admin", "account types", "login roles"],
-     "Patient – view own reports. Doctor – screen patients and see their own screenings. Hospital – screen, add "
-     "doctors and see all screenings of the hospital. Admin – manage all users and see every record."),
+     "Patient – view own reports. Doctor – the only role that uploads images and screens patients; sees own "
+     "screenings. Hospital – adds doctors and reviews all screenings of its doctors. Admin – manages all users and "
+     "sees every record."),
     (["how to create account", "register", "sign up", "new patient account", "how do i register"],
      "Patients can create an account with 'Register' on the login page. Doctor and hospital accounts are created "
      "by the administrator (hospitals can also add their own doctors) from the Users page."),

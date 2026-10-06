@@ -22,7 +22,7 @@ const QUALITY_TEXT: Record<string, string> = {
 
 export default function ScreeningPage() {
   return (
-    <RequireRole roles={["admin", "hospital", "doctor"]}>
+    <RequireRole roles={["doctor"]}>
       <Screening />
     </RequireRole>
   );
@@ -127,7 +127,7 @@ function Screening() {
                 </select>
                 <span className="mt-1 block text-xs text-slate-500">
                   Linking a patient lets them see this report when they log in.
-                  {user?.role === "doctor" && " The record is saved under your name."}
+                  {" The record is saved under your name."}
                 </span>
               </Field>
               <Field label={t("name")} className="sm:col-span-2">
@@ -159,7 +159,7 @@ function Screening() {
                   className="input"
                   value={meta.centre}
                   onChange={set("centre")}
-                  placeholder={user?.role === "admin" ? "e.g. PHC Rampur" : "Leave empty to use your hospital's name"}
+                  placeholder="Leave empty to use your hospital's name"
                 />
               </Field>
             </div>
