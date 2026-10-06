@@ -1,4 +1,4 @@
-import Link from "next/link";
+import HomeActions from "@/components/HomeActions";
 
 const PIPELINE = [
   { step: "01", title: "Data collection", text: "APTOS-2019 (Aravind Eye Hospital, India) via the Kaggle API – 3,662 graded fundus photos." },
@@ -33,17 +33,7 @@ export default function Home() {
             referral recommendation.
           </p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link href="/login" className="rounded-xl bg-cyan-500 px-6 py-3 text-center font-semibold text-slate-950 hover:bg-cyan-400">
-              Log in
-            </Link>
-            <Link href="/register" className="rounded-xl border border-slate-700 px-6 py-3 text-center font-semibold hover:bg-slate-900">
-              Register as patient
-            </Link>
-            <Link href="/model" className="rounded-xl border border-slate-700 px-6 py-3 text-center font-semibold hover:bg-slate-900">
-              How the model performs
-            </Link>
-          </div>
+          <HomeActions />
         </div>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
