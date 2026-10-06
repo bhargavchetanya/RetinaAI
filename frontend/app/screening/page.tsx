@@ -5,9 +5,12 @@ import { AlertTriangle, CheckCircle2, FileDown, Loader2, RotateCcw, ShieldAlert,
 import ImageUploader from "@/components/ImageUploader";
 import HeatmapViewer from "@/components/HeatmapViewer";
 import ConfidenceChart from "@/components/ConfidenceChart";
-import { api, API_URL } from "@/lib/api";
+import { api, API_URL, openReport } from "@/lib/api";
+import { RequireRole, useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
-import type { ScreeningResult } from "@/types";
+import type { ScreeningResult, User } from "@/types";
+
+type PatientOption = Pick<User, "id" | "username" | "full_name" | "age" | "sex">;
 
 const QUALITY_TEXT: Record<string, string> = {
   blurred: "blurred",
@@ -18,7 +21,18 @@ const QUALITY_TEXT: Record<string, string> = {
 };
 
 export default function ScreeningPage() {
+  return (
+    <RequireRole roles={["admin", "hospital", "doctor"]}>
+      <Screening />
+    </RequireRole>
+  );
+}
+
+function Screening() {
   const { t, lang } = useLang();
+  const { user } = useAuth();
+  const [patients, setPatients] = useState<PatientOption[]>([]);
+  const [patientId, setPatientId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [meta, setMeta] = useState({ patient_name: "", patient_age: "", patient_sex: "", diabetes_years: "", eye: "", centre: "" });
   const [loading, setLoading] = useState(false);
@@ -31,6 +45,7 @@ export default function ScreeningPage() {
       .health()
       .then((h) => setHealth(h.model_loaded ? { ok: true } : { ok: false, msg: h.error ?? t("model_missing") }))
       .catch(() => setHealth({ ok: false, msg: `${t("backend_down")} ${API_URL}` }));
+    api.patients().then(setPatients).catch(() => setPatients([]));
     try {
       const c = localStorage.getItem("retina-centre");
       if (c) setMeta((m) => ({ ...m, centre: c }));
@@ -44,6 +59,7 @@ export default function ScreeningPage() {
     setError(null);
     const fd = new FormData();
     fd.append("file", file);
+    if (patientId) fd.append("patient_id", patientId);
     Object.entries(meta).forEach(([k, v]) => v !== "" && fd.append(k, v));
     try {
       localStorage.setItem("retina-centre", meta.centre);
@@ -61,8 +77,20 @@ export default function ScreeningPage() {
     setResult(null);
     setFile(null);
     setError(null);
+    setPatientId("");
     setMeta((m) => ({ ...m, patient_name: "", patient_age: "", patient_sex: "", diabetes_years: "", eye: "" }));
   }
+
+  function choosePatient(id: string) {
+    setPatientId(id);
+    const p = patients.find((x) => String(x.id) === id);
+    setMeta((m) =>
+      p
+        ? { ...m, patient_name: p.full_name, patient_age: p.age != null ? String(p.age) : "", patient_sex: p.sex ?? "" }
+        : { ...m, patient_name: "", patient_age: "", patient_sex: "" },
+    );
+  }
+  const linked = patientId !== "";
 
   const set = (k: keyof typeof meta) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setMeta({ ...meta, [k]: e.target.value });
@@ -87,14 +115,29 @@ export default function ScreeningPage() {
           <div className="card flex flex-col">
             <div className="label mb-4">{t("patient")}</div>
             <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Patient account" className="sm:col-span-2">
+                <select className="input" value={patientId} onChange={(e) => choosePatient(e.target.value)}>
+                  <option value="">Walk-in (no account – only staff can see this record)</option>
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.full_name} (@{p.username}
+                      {p.age ? `, ${p.age}` : ""})
+                    </option>
+                  ))}
+                </select>
+                <span className="mt-1 block text-xs text-slate-500">
+                  Linking a patient lets them see this report when they log in.
+                  {user?.role === "doctor" && " The record is saved under your name."}
+                </span>
+              </Field>
               <Field label={t("name")} className="sm:col-span-2">
-                <input className="input" value={meta.patient_name} onChange={set("patient_name")} />
+                <input className="input" value={meta.patient_name} onChange={set("patient_name")} disabled={linked} />
               </Field>
               <Field label={t("age")}>
-                <input className="input" type="number" min={0} max={120} value={meta.patient_age} onChange={set("patient_age")} />
+                <input className="input" type="number" min={0} max={120} value={meta.patient_age} onChange={set("patient_age")} disabled={linked} />
               </Field>
               <Field label={t("sex")}>
-                <select className="input" value={meta.patient_sex} onChange={set("patient_sex")}>
+                <select className="input" value={meta.patient_sex} onChange={set("patient_sex")} disabled={linked}>
                   <option value="">—</option>
                   <option value="M">{t("male")}</option>
                   <option value="F">{t("female")}</option>
@@ -112,7 +155,12 @@ export default function ScreeningPage() {
                 <input className="input" type="number" min={0} step={0.5} value={meta.diabetes_years} onChange={set("diabetes_years")} />
               </Field>
               <Field label={t("centre")} className="sm:col-span-2">
-                <input className="input" value={meta.centre} onChange={set("centre")} placeholder="e.g. PHC Rampur" />
+                <input
+                  className="input"
+                  value={meta.centre}
+                  onChange={set("centre")}
+                  placeholder={user?.role === "admin" ? "e.g. PHC Rampur" : "Leave empty to use your hospital's name"}
+                />
               </Field>
             </div>
             <div className="mt-auto pt-6">
@@ -238,14 +286,12 @@ function Result({
 
         <div className="flex flex-col gap-3 sm:flex-row">
           {r.id !== undefined && (
-            <a
-              href={api.reportUrl(r.id)}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              onClick={() => openReport(r.id!).catch((e) => alert((e as Error).message))}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-slate-950 hover:bg-cyan-400"
             >
               <FileDown className="h-4 w-4" /> {t("report")}
-            </a>
+            </button>
           )}
           <button
             onClick={onReset}

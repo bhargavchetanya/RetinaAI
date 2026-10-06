@@ -36,3 +36,6 @@ body {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+.input:disabled {
+  @apply cursor-not-allowed opacity-60;
+}

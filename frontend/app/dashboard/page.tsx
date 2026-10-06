@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CheckCircle2, FileDown, ShieldAlert, Trash2 } from "lucide-react";
-import { api } from "@/lib/api";
+import { CheckCircle2, Eye, FileDown, ShieldAlert, Trash2, UserCheck } from "lucide-react";
+import { api, openReport } from "@/lib/api";
+import { RequireRole, useAuth } from "@/lib/auth";
 import { axisProps, gridProps, Legend, StatTile, tooltipProps } from "@/components/charts";
 import type { ScreeningRow, Stats } from "@/types";
 
@@ -17,7 +18,25 @@ const FOLLOWUP: Record<string, string> = {
   lost: "Lost to follow-up",
 };
 
-export default function Dashboard() {
+export default function DashboardPage() {
+  return (
+    <RequireRole roles={["admin", "hospital", "doctor"]}>
+      <Dashboard />
+    </RequireRole>
+  );
+}
+
+const SCOPE_TEXT = {
+  admin: "All records from every hospital (administrator view).",
+  hospital: "Screenings performed at your hospital, by you or your doctors.",
+  doctor: "Screenings you performed.",
+  patient: "",
+};
+
+function Dashboard() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+  const showDoctor = user?.role !== "doctor";
   const [stats, setStats] = useState<Stats | null>(null);
   const [rows, setRows] = useState<ScreeningRow[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -38,10 +57,10 @@ export default function Dashboard() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-bold">Screening dashboard</h1>
-      <p className="mt-2 text-slate-400">Screening volume, referral rate and follow-up status across health centres.</p>
+      <h1 className="text-3xl font-bold">{isAdmin ? "All records" : "Screening dashboard"}</h1>
+      <p className="mt-2 text-slate-400">{user ? SCOPE_TEXT[user.role] : ""} Volume, referral rate and follow-up status.</p>
 
-      {error && <p className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-300">Backend unreachable: {error}</p>}
+      {error && <p className="mt-5 rounded-lg bg-red-500/10 p-3 text-sm text-red-300">Could not load records: {error}</p>}
 
       {stats && (
         <>
@@ -144,13 +163,14 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
-          <table className="tabular w-full min-w-[820px] text-sm">
+          <table className="tabular w-full min-w-[960px] text-sm">
             <thead className="text-left text-xs text-slate-400">
               <tr>
                 <th className="py-2">#</th>
                 <th className="py-2">Date</th>
                 <th className="py-2">Patient</th>
                 <th className="py-2">Centre</th>
+                {showDoctor && <th className="py-2">Screened by</th>}
                 <th className="py-2">Grade</th>
                 <th className="py-2 pr-6 text-right">Conf.</th>
                 <th className="py-2">Decision</th>
@@ -167,8 +187,14 @@ export default function Dashboard() {
                     {r.patient_name || <span className="text-slate-500">—</span>}
                     {r.patient_age ? <span className="text-slate-500">, {r.patient_age}</span> : null}
                     {r.eye ? <span className="text-slate-500"> ({r.eye})</span> : null}
+                    {r.patient_id ? (
+                      <span title="Linked to a patient account – the patient can see this report">
+                        <UserCheck className="ml-1 inline h-3.5 w-3.5 text-cyan-400" />
+                      </span>
+                    ) : null}
                   </td>
                   <td className="py-2 text-slate-300">{r.centre || "—"}</td>
+                  {showDoctor && <td className="py-2 text-slate-300">{r.doctor_name || r.hospital_name || "Admin"}</td>}
                   <td className="py-2">{r.grade_name}</td>
                   <td className="py-2 pr-6 text-right">{(r.confidence * 100).toFixed(0)}%</td>
                   <td className="py-2">
@@ -197,16 +223,25 @@ export default function Dashboard() {
                   </td>
                   <td className="py-2">
                     <div className="flex justify-end gap-2">
-                      <a href={api.reportUrl(r.id)} target="_blank" rel="noreferrer" title="PDF report" className="text-cyan-400 hover:text-cyan-300">
-                        <FileDown className="h-4 w-4" />
-                      </a>
+                      <Link href={`/records/${r.id}`} title="Open" className="text-slate-300 hover:text-white">
+                        <Eye className="h-4 w-4" />
+                      </Link>
                       <button
-                        title="Delete"
-                        className="text-slate-500 hover:text-red-400"
-                        onClick={() => confirmDelete(r.id) && api.remove(r.id).then(load)}
+                        title="PDF report"
+                        className="text-cyan-400 hover:text-cyan-300"
+                        onClick={() => openReport(r.id).catch((e) => alert((e as Error).message))}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <FileDown className="h-4 w-4" />
                       </button>
+                      {isAdmin && (
+                        <button
+                          title="Delete (admin only)"
+                          className="text-slate-500 hover:text-red-400"
+                          onClick={() => confirmDelete(r.id) && api.remove(r.id).then(load)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

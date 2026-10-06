@@ -7,6 +7,9 @@ const PIPELINE = [
   { step: "04", title: "Trust layer", text: "Temperature-scaled confidence, quality check and K-NN out-of-distribution guard." },
   { step: "05", title: "Explainability", text: "Grad-CAM++ heat-map + plain-language explanation of what the model saw." },
   { step: "06", title: "Referral", text: "Referable DR (grade ≥ 2) threshold tuned for ≥ 90 % sensitivity, PDF report, dashboard." },
+  { step: "07", title: "Secure access", text: "Patient, doctor, hospital and admin logins – everyone sees only the records they are allowed to." },
+  { step: "08", title: "Assistant", text: "Offline TF-IDF chatbot answers questions about DR, results and the app (bottom-right)." },
+  { step: "09", title: "Offline-ready", text: "Runs on a laptop without internet; ONNX export for cheap CPU devices." },
 ];
 
 export default function Home() {
@@ -31,11 +34,11 @@ export default function Home() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link href="/screening" className="rounded-xl bg-cyan-500 px-6 py-3 text-center font-semibold text-slate-950 hover:bg-cyan-400">
-              Start Screening
+            <Link href="/login" className="rounded-xl bg-cyan-500 px-6 py-3 text-center font-semibold text-slate-950 hover:bg-cyan-400">
+              Log in
             </Link>
-            <Link href="/dashboard" className="rounded-xl border border-slate-700 px-6 py-3 text-center font-semibold hover:bg-slate-900">
-              Open Dashboard
+            <Link href="/register" className="rounded-xl border border-slate-700 px-6 py-3 text-center font-semibold hover:bg-slate-900">
+              Register as patient
             </Link>
             <Link href="/model" className="rounded-xl border border-slate-700 px-6 py-3 text-center font-semibold hover:bg-slate-900">
               How the model performs

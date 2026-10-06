@@ -56,6 +56,11 @@ export interface ScreeningRow {
   refer: boolean;
   quality_ok: boolean;
   followup: string;
+  patient_id?: number | null;
+  doctor_id?: number | null;
+  hospital_id?: number | null;
+  doctor_name?: string | null;
+  hospital_name?: string | null;
 }
 
 export interface Stats {
@@ -163,4 +168,18 @@ export interface ModelInfo {
   baselines: { results: Baseline[] } | null;
   clustering: Clustering | null;
   data: DataSummary | null;
+}
+
+export type Role = "admin" | "hospital" | "doctor" | "patient";
+
+export interface User {
+  id: number;
+  username: string;
+  role: Role;
+  full_name: string;
+  hospital_id: number | null;
+  hospital_name?: string | null;
+  age: number | null;
+  sex: string | null;
+  created_at: string;
 }

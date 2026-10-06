@@ -159,6 +159,43 @@ DBSCAN marks 188 atypical images as noise. The same density idea drives the app'
 | **Screening** | Upload, grade, confidence, heat-map viewer (fade slider, original / enhanced / heat-map), explanation, referral, PDF report |
 | **Dashboard** | Screening volume, referral rate, per-centre table, follow-up tracking |
 | **Model** | Every metric and chart above, interactive |
+| **Login / Register** | Role-based sign-in; patients can create their own account |
+| **My Reports** | A patient's own screening history, with heat-maps and PDFs |
+| **Users** | Admin manages all accounts; a hospital manages its doctors |
+
+### Accounts and access control
+
+Every page except Home and Model needs a login. Each role sees only what it is allowed to:
+
+| Role | Can do | Sees |
+|---|---|---|
+| **Patient** | Register themselves, read and download their reports | Only their own screenings |
+| **Doctor** | Screen patients (link the screening to a patient account) | Only screenings they performed |
+| **Hospital** | Screen patients, add and remove its own doctors | Screenings done at that hospital |
+| **Admin** | Manage all accounts, delete records | **All records** |
+
+How it is secured:
+
+- Passwords are stored as salted **PBKDF2-SHA256** hashes (200,000 iterations), never in plain text.
+- Login returns a random 256-bit session token that expires after 7 days.
+- Every API request is checked on the server against the user's role. Asking for a record you are not allowed to
+  see returns "not found".
+
+On the first start, demo accounts are created: `admin / admin123`, `hospital1 / hospital123`, `doctor1 / doctor123`
+and `patient1 / patient123`. Change or delete them for real use.
+
+### RetinaAI assistant (chatbot)
+
+The chat button at the bottom-right of every page opens a small **offline** assistant. It needs no internet or API
+key:
+
+- It has a hand-written knowledge base of about 25 question/answer pairs about DR, the app, the model and privacy.
+- Your question and every stored question are turned into **TF-IDF vectors** (word n-grams plus character n-grams,
+  so small typos still match).
+- The best answer is found by **cosine similarity**, i.e. 1-nearest-neighbour search.
+- If nothing is similar enough, it says it doesn't know instead of guessing.
+- "My latest result" answers from the logged-in user's own records, following the same access rules as the rest of
+  the app.
 
 <!-- Add your own screenshots to docs/images/ and uncomment:
 <p align="center">
@@ -194,7 +231,7 @@ RetinaAI/
 │   ├── 06_export_onnx.py        offline / edge deployment
 │   ├── 07_sample_predictions.py sample results for this README
 │   └── train_overnight.sh       unattended training with auto-resume
-├── backend/                 FastAPI server, SQLite, PDF reports
+├── backend/                 FastAPI server: auth.py (login/roles), db.py (SQLite), chatbot.py, PDF reports
 ├── frontend/                Next.js 15 + Tailwind CSS website
 ├── models/                  trained checkpoint, ONNX model, training embeddings
 ├── reports/                 metrics JSON and figures

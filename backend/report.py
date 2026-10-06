@@ -18,7 +18,7 @@ IMG_DIR.mkdir(exist_ok=True)
 
 
 def save_images(sid: int, images: dict):
-    for k in ("original", "heatmap"):
+    for k in ("original", "enhanced", "heatmap"):
         data = images[k].split(",", 1)[1]
         (IMG_DIR / f"{sid}_{k}.png").write_bytes(base64.b64decode(data))
 
